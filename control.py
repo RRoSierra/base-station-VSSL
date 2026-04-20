@@ -3,12 +3,12 @@ import serial
 import time
 
 #-----Configurations-----
-SERIAL_PORT = '/dev/ttyUSB0'  # Change as needed
+SERIAL_PORT = 'COM6'  # Change as needed
 #Puede que no se tengan los permisos necesarios en linux para acceder al puerto serial en linux
 #usar: sudo usermod -a -G dialout $USER para ubuntu/debian
 #usar: sudo usermod -a -G uucp $USER para archlinux/manjaro
 BAUD_RATE = 115200
-NUM_ROBOTS = 5 # Numero de robots a controlar modificar si se agragan mas robots
+NUM_ROBOTS = 5 # Numero de robots a controlar modificar si se agregan mas robots
 #--------------------------------
 
 #iniciar pygame

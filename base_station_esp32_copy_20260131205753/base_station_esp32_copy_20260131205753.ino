@@ -5,7 +5,7 @@
 #define NUM_ROBOTS 5
 
 // Direccion de broadcast
-uint8_t broadcastAddress[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+uint8_t broadcastAddress[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};  //direccion mac de la basestation: 08:D1:F9:F9:62:54
 
 // Estructura del dato a enviar (Igual que antes)
 typedef struct struct_mensaje{
@@ -28,10 +28,37 @@ typedef struct struct_mensaje{
 struct_mensaje mimensaje;
 esp_now_peer_info_t peerInfo;
 
+//recibidos por el robotito:
+typedef struct struct_telemetria{
+  int id;
+  float accelx;
+  float accely;
+  float anguloz;
+  float velocidad_lineal;
+} struct_telemetria;
+
+struct_telemetria datosRobots;
+
+
+
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status){
   // Opcional: Descomentar para debug, pero ensucia el monitor si mandas muy rapido
   // Serial.print("\r\nEstado: ");
   // Serial.println(status == ESP_NOW_SEND_SUCCESS ? "OK" : "Error");
+}
+
+void OnDataRecv(const esp_now_recv_info *info, const uint8_t *incomingData, int len){
+  memcpy(&datosRobots, incomingData, sizeof(datosRobots));
+  Serial.print("ID: ");
+  Serial.print(datosRobots.id);
+  Serial.print(" Velocidad: ");
+  Serial.print(datosRobots.velocidad_lineal);
+  Serial.print(" Aceleracion en x: ");
+  Serial.print(datosRobots.accelx);
+  Serial.print(" Aceleracion en y: ");
+  Serial.print(datosRobots.accely);
+  Serial.print(" Angulo: ");
+  Serial.println(datosRobots.anguloz);
 }
 
 void setup() {
@@ -46,6 +73,8 @@ void setup() {
   // Registrar Callback de envio
   esp_now_register_send_cb(OnDataSent);
 
+  esp_now_register_recv_cb(OnDataRecv);
+
   // Registrar Peer (Broadcast)
   memcpy(peerInfo.peer_addr, broadcastAddress, 6);
   peerInfo.channel = 0;
@@ -58,8 +87,6 @@ void setup() {
 }
 
 void loop() {
-  // ESPERAMOS FORMATO: "ID,X,Y\n"  (Ejemplo: "1,50,100")
-  
   if(Serial.available() > 0){
     String data = Serial.readStringUntil('\n');
     
