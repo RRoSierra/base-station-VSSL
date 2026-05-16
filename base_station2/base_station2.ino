@@ -73,9 +73,15 @@ void loop() {
       mimensaje.y_robot_4 = (int16_t)y4;
       mimensaje.x_robot_5 = (int16_t)x5;
       mimensaje.y_robot_5 = (int16_t)y5;
-
+    
+      Serial.print("Base leyo bien -> M1_Izq: ");
+      Serial.print(mimensaje.x_robot_1);
+      Serial.print(" | M1_Der: ");
+      Serial.println(mimensaje.y_robot_1);
       // Enviamos el paquete completo
       esp_now_send(broadcastAddress, (uint8_t *) &mimensaje, sizeof(mimensaje));
+    } else{
+      Serial.println("No se leyeron 10 valores");
     }
   }
 }
